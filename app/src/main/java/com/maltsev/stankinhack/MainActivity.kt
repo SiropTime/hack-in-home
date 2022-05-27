@@ -11,6 +11,8 @@ import com.maltsev.stankinhack.utils.SetupNavGraph
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val BOT_SENDER = "bot"
+
 val builder = GsonBuilder()
 val gson = builder.setLenient().create()
 
