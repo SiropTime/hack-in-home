@@ -1,10 +1,13 @@
 package com.maltsev.stankinhack.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -27,12 +30,22 @@ private val LightColorPalette = lightColors(
     */
 )
 
+
 @Composable
 fun StankinHackTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
+    val systemUiController = rememberSystemUiController()
+
+    val colors: Colors
+    if (darkTheme) {
+        colors = DarkColorPalette
+        systemUiController.setSystemBarsColor(
+            color = DarkColorPalette.background
+        )
     } else {
-        LightColorPalette
+        colors = LightColorPalette
+        systemUiController.setSystemBarsColor(
+            color = Color.White
+        )
     }
 
     MaterialTheme(
