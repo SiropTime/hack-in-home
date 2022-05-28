@@ -1,5 +1,7 @@
 package com.maltsev.stankinhack.ui.items
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,20 +12,26 @@ import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.maltsev.stankinhack.screens.canTalking
 import com.maltsev.stankinhack.screens.messageFieldText
 import com.maltsev.stankinhack.screens.messagesList
 import com.maltsev.stankinhack.utils.Message
+import com.maltsev.stankinhack.utils.makeSendingMessage
+
 
 @Composable
 fun SendMessageUI() {
     val tempList = remember { mutableStateListOf<Message>() }
+    val isListening = remember { mutableStateOf(false) }
     tempList.swapList(messagesList)
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,6 +63,17 @@ fun SendMessageUI() {
             OutlinedButton(
                 onClick = {
 
+//                    if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+//                        if (isListening.value) {
+////                            recorder?.stop()
+////                            recorder?.release()
+//                            isListening.value = false
+//                        } else {
+////                            recorder?.prepare()
+////                            recorder?.start()
+//                            isListening.value = true
+//                        }
+//                    }
                 },
                 modifier = Modifier
                     .padding(2.dp)
@@ -65,6 +84,7 @@ fun SendMessageUI() {
                         width = 2.dp,
                         shape = CircleShape
                     ),
+                colors = ButtonDefaults.buttonColors(),
                 contentPadding = PaddingValues(0.dp),
                 shape = CircleShape,
             ) {
@@ -84,6 +104,7 @@ fun SendMessageUI() {
                 shape = CircleShape,
                 contentPadding = PaddingValues(0.dp),
                 onClick = {
+                    makeSendingMessage(messageFieldText.value, context)
                     canTalking.value = true
                     messagesList.add(Message("man", messageFieldText.value))
                     tempList.swapList(messagesList)

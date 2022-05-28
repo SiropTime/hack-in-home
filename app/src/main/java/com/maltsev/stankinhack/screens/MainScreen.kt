@@ -35,26 +35,7 @@ val messagesList = mutableStateListOf<Message>()
 @Composable
 fun MainScreen(navController: NavController) {
 
-    messagesList.add(Message(BOT_SENDER, "Дарова ёпта"))
-    messagesList.add(Message("man", "Дарова чепушила"))
-    messagesList.add(Message(BOT_SENDER, "Хочешь хуёца в станке пососать?))))"))
-    messagesList.add(Message("man", "Нет вадим борисыч пожалуйста(((((("))
-    messagesList.add(Message("man", "Я готов даже яновскую выебать только не надо пожалуйста...."))
-    messagesList.add(Message(BOT_SENDER, "Дарова ёпта"))
-    messagesList.add(Message("man", "Дарова чепушила"))
-    messagesList.add(Message(BOT_SENDER, "Хочешь хуёца в станке пососать?))))"))
-    messagesList.add(Message("man", "Нет вадим борисыч пожалуйста(((((("))
-    messagesList.add(Message("man", "Я готов даже яновскую выебать только не надо пожалуйста...."))
-    messagesList.add(Message(BOT_SENDER, "Дарова ёпта"))
-    messagesList.add(Message("man", "Дарова чепушила"))
-    messagesList.add(Message(BOT_SENDER, "Хочешь хуёца в станке пососать?))))"))
-    messagesList.add(Message("man", "Нет вадим борисыч пожалуйста(((((("))
-    messagesList.add(Message("man", "Я готов даже яновскую выебать только не надо пожалуйста...."))
-    messagesList.add(Message(BOT_SENDER, "Дарова ёпта"))
-    messagesList.add(Message("man", "Дарова чепушила"))
-    messagesList.add(Message(BOT_SENDER, "Хочешь хуёца в станке пососать?))))"))
-    messagesList.add(Message("man", "Нет вадим борисыч пожалуйста(((((("))
-    messagesList.add(Message("man", "Я готов даже яновскую выебать только не надо пожалуйста...."))
+    messagesList.add(Message(BOT_SENDER, "Проверяем студентов на злокачественные опухоли"))
 
     Surface {
 

@@ -46,7 +46,7 @@ fun MessageRow(message: Message) {
                 .wrapContentSize()
                 .padding(8.dp)
                 .clip(RoundedCornerShape(30))
-                .background(color = if (message.sender == BOT_SENDER) MaterialTheme.colors.primary else MaterialTheme.colors.secondary)
+                .background(color = if (message.sender == BOT_SENDER) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.secondaryVariant)
                 .border(
                     color = if (message.sender == BOT_SENDER) MaterialTheme.colors.primary else MaterialTheme.colors.secondary,
                     width = 2.dp,
@@ -58,7 +58,7 @@ fun MessageRow(message: Message) {
                     .padding(8.dp)
                     .defaultMinSize(minHeight = 25.dp),
                 text = message.text,
-                color = MaterialTheme.colors.onPrimary,
+//                color = MaterialTheme.colors.onPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
                 )
