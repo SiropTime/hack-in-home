@@ -4,7 +4,7 @@ import requests
 
 from flask import Flask, jsonify, request, json
 
-from utility import Recognizer, compare_commands
+from utility import Recognizer, compare_commands, DEFAULT_MESSAGE
 
 app = Flask("TextRecognizer")
 app.config['JSON_AS_ASCII'] = False
@@ -35,7 +35,7 @@ def process_audio():
         result_command = compare_commands(command_data, json_response['question'])
 
         if result_command:
-            return {"sender": "bot", "text": result_command.encode('utf-8')}, 201
+            return {"sender": "bot", "text": result_command.encode('utf-8')}, 200
         else:
             # Не 404, потому что запрос был проведён полностью
             return jsonify({"message": "Ничего не найдено"}), 202
@@ -57,9 +57,17 @@ def process_message():
             questions = [x["question"] for x in json_response]
 
             result_command = compare_commands(message, questions)
+            if result_command == DEFAULT_MESSAGE:
+                requests_session.post(MAIN_BACK_URL + "/faq/save", json={"question": message})
+                return {"sender": "bot", "text": result_command}, 200
+            result_answer = ""
+            for item in json_response:
+                if item["question"] == result_command:
+                    result_answer = item["answer"]
+                    break
 
             if result_command:
-                return {"sender": "bot", "text": result_command}, 200
+                return {"sender": "bot", "text": result_answer}, 200
 
             else:
                 # Аналогичная причина

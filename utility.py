@@ -1,14 +1,22 @@
+import difflib
+
 from fuzzywuzzy import fuzz
+
 import speech_recognition
+
+DEFAULT_MESSAGE = "Извини, не смог понять, что тебе нужно :( Но я отправил коллегам на рассмотрение!"
 
 
 # Сравнение двух строк на схожесть
 # Необходимо для сравнения запроса пользователя с актуальными вопросами
 # Имеющимися у нас в распоряжении
-def similarity(s1: str, s2: str):
+def similarity(s1: str, s2: str) -> float:
     n1 = s1.lower()  # Приводим к удобоваримому виду первую строку
     n2 = s2.lower()  # Аналогично со второй
-    return fuzz.WRatio(n1, n2)*0.01
+    r1 = fuzz.WRatio(n1, n2) * 0.01  # Проверяем одним алгоритмом
+    r2 = difflib.SequenceMatcher(None, n1, n2).ratio()  # Вторым
+    res = (r1 + r2) / 2  # Для большей точности среднее берём и килдаем
+    return res
 
 
 def compare_commands(user_input: str, commands: list) -> str:
@@ -19,9 +27,18 @@ def compare_commands(user_input: str, commands: list) -> str:
     """
     result_dict = {}
     for command in commands:
-        result_dict[command] = similarity(user_input, command)
-    result = max(result_dict, key=result_dict.get)
-    return result
+        try:
+            sim = similarity(user_input, command)
+        except AttributeError:
+            continue
+        if sim > 0.5:
+            result_dict[command] = sim
+    print(result_dict)
+    if not len(result_dict.values()) == 0:
+        result = max(result_dict, key=result_dict.get)
+        return result
+    else:
+        return DEFAULT_MESSAGE
 
 
 class Recognizer:
