@@ -1,17 +1,16 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: none
-
+      ddl-auto: create
   datasource:
     driver-class-name: 'org.postgresql.Driver'
     url: 'jdbc:postgresql://localhost:5432/hackaton'
     username: 'postgres'
     password: 'admin'
 
-  liquibase:
-    enabled: 'true'
+springdoc:
+  swagger-ui:
+    path: '/api'
 
-#springdoc:
-#  swagger-ui:
-#    path: '/api'
+stankin:
+  api: "https://rinh-api.kovalev.team"
