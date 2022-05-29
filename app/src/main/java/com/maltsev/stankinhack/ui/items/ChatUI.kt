@@ -58,7 +58,7 @@ fun MessageRow(message: Message) {
                     .padding(8.dp)
                     .defaultMinSize(minHeight = 25.dp),
                 text = message.text,
-//                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colors.onPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
                 )

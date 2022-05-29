@@ -1,14 +1,13 @@
 package com.maltsev.stankinhack.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,42 +28,53 @@ val messageFieldText = mutableStateOf("")
 
 val canTalking = mutableStateOf(true)
 
-val messagesList = mutableStateListOf<Message>()
+val messagesList = mutableStateListOf<Message>(Message(BOT_SENDER, "Привет, студент!"), Message(BOT_SENDER, "Спрашивай, что интересно!"))
 
 
 @Composable
 fun MainScreen(navController: NavController) {
 
-    messagesList.add(Message(BOT_SENDER, "Проверяем студентов на злокачественные опухоли"))
+    Scaffold(
+        topBar = { TopAppBar (
+            title = { Text ("Бот-помощник Борис", color = Color.White)
+            }, backgroundColor =  MaterialTheme.colors.primary) },
+        content = {
+            Surface {
 
-    Surface {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
 
-        Column(
-           modifier = Modifier
-               .fillMaxSize()
-               .padding(5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                ) {
 
-        ) {
+                    // Chat - ChatUI.kt
+                    Row(
+                        modifier = Modifier
+                            .weight(0.75f)
+                    ) {
+                        ChatUI()
+                    }
 
-            // Chat - ChatUI.kt
-            Row(
-               modifier = Modifier
-                   .weight(0.75f)
-            ) {
-                ChatUI()
+                    Divider(
+                        color = MaterialTheme.colors.primary,
+                        thickness = 2.dp,
+                        modifier = Modifier.padding(vertical = 5.dp)
+                    )
+                    // Row with message field, voice button and send button
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 5.dp)
+                    ) {
+                        SendMessageUI()
+                    }
+
+                }
             }
-
-            Divider(color = MaterialTheme.colors.primary, thickness = 2.dp)
-            // Row with message field, voice button and send button
-            Row(
-                modifier = Modifier
-                    .padding(vertical = 5.dp)
-            ) {
-                SendMessageUI()
-            }
-
         }
-    }
+
+    )
+
 }

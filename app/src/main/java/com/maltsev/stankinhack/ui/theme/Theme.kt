@@ -12,6 +12,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 private val DarkColorPalette = darkColors(
     primary = PrimaryStankin,
     primaryVariant = PrimaryStakninVariant,
+    onPrimary = Color.White,
     secondary = SecondaryStankin,
     secondaryVariant = SecondaryStankinVariant,
     onSecondary = Color.White
@@ -19,6 +20,7 @@ private val DarkColorPalette = darkColors(
 
 private val LightColorPalette = lightColors(
     primary = PrimaryStankin,
+    onPrimary = Color.White,
     primaryVariant = PrimaryStakninVariant,
     secondary = SecondaryStankin,
     secondaryVariant = SecondaryStankinVariant,
@@ -43,12 +45,12 @@ fun StankinHackTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compo
     if (darkTheme) {
         colors = DarkColorPalette
         systemUiController.setSystemBarsColor(
-            color = DarkColorPalette.background
+            color = DarkColorPalette.primary
         )
     } else {
         colors = LightColorPalette
         systemUiController.setSystemBarsColor(
-            color = Color.White
+            color = LightColorPalette.primary
         )
     }
 

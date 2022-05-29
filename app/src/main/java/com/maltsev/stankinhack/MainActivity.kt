@@ -3,7 +3,13 @@ package com.maltsev.stankinhack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.GsonBuilder
@@ -30,14 +36,11 @@ val retrofit : Retrofit = Retrofit.Builder()
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         lateinit var navController: NavHostController
-//        recorder = MediaRecorder()
-//        recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-//        recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-//        recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+
         super.onCreate(savedInstanceState)
         setContent {
             val context = LocalContext.current
-//            recorder?.setOutputFile(context.filesDir)
+
 
             StankinHackTheme {
                 navController = rememberNavController()
@@ -46,3 +49,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
