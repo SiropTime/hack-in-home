@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/requisition")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RequisitionController {
 
     @Autowired
