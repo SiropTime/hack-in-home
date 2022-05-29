@@ -2,12 +2,13 @@ import os
 
 import requests
 
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json, flash
 
 from utility import Recognizer, compare_commands, DEFAULT_MESSAGE
 
 app = Flask("TextRecognizer")
 app.config['JSON_AS_ASCII'] = False
+app.config['UPLOAD_FOLDER'] = 'audios/'
 MAIN_BACK_URL = "http://25.6.173.125:8080"  # URL на Данин бэк
 recognizer = Recognizer()
 
@@ -22,20 +23,39 @@ def home():
     return "Home"
 
 
-@app.route("/listen", methods=['POST',])
+@app.route("/listen", methods=['POST'])
 def process_audio():
     if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return "Please, send audio file"
 
-        save_path = os.path.join('audios/', 'temp.wav')
-        request.files['music_file'].save(save_path)
-        command_data = recognizer.recognize_audio('save_path')
+        file = request.files['file']
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], "voice.wav"))
+        message = recognizer.recognize_audio('voice.wav')
 
         response = requests_session.get(MAIN_BACK_URL + "/faq/all")
         json_response = response.json()
-        result_command = compare_commands(command_data, json_response['question'])
+        questions = [x["question"] for x in json_response]
+
+        result_command = compare_commands(message, questions)
+        if result_command == DEFAULT_MESSAGE:
+            requests_session.post(MAIN_BACK_URL + "/faq/save", json={"question": message})
+            return {"sender": "bot", "text": result_command}, 200
+        result_answer = ""
+        for item in json_response:
+            if item["question"] == result_command:
+                result_answer = item["answer"]
+                break
 
         if result_command:
-            return {"sender": "bot", "text": result_command.encode('utf-8')}, 200
+            return {"sender": "bot", "text": result_answer}, 200
+
+        else:
+            # Аналогичная причина
+            return {"text": "Ничего не найдено"}, 202
+        if result_command:
+            return {"sender": "bot", "text": result_command}, 200
         else:
             # Не 404, потому что запрос был проведён полностью
             return jsonify({"message": "Ничего не найдено"}), 202
