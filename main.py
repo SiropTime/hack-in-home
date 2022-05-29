@@ -1,7 +1,7 @@
 import os
 
 import requests
-
+from pydub import AudioSegment
 from flask import Flask, jsonify, request, json, flash
 
 from utility import Recognizer, compare_commands, DEFAULT_MESSAGE
@@ -11,7 +11,6 @@ app.config['JSON_AS_ASCII'] = False
 app.config['UPLOAD_FOLDER'] = 'audios/'
 MAIN_BACK_URL = "http://25.6.173.125:8080"  # URL на Данин бэк
 recognizer = Recognizer()
-
 
 requests_session = requests.session()
 requests_session.headers.update({'Content-Type': 'application/json'})
@@ -31,9 +30,11 @@ def process_audio():
             return "Please, send audio file"
 
         file = request.files['file']
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], "voice.wav"))
-        message = recognizer.recognize_audio('voice.wav')
-
+        file.save("audios/voice.wav")
+        voice = AudioSegment.from_file("audios/voice.wav")
+        voice.export("audios/ready.flac", format="flac")
+        message = recognizer.recognize_audio("audios/ready.flac")
+        print(message)
         response = requests_session.get(MAIN_BACK_URL + "/faq/all")
         json_response = response.json()
         questions = [x["question"] for x in json_response]
@@ -54,11 +55,6 @@ def process_audio():
         else:
             # Аналогичная причина
             return {"text": "Ничего не найдено"}, 202
-        if result_command:
-            return {"sender": "bot", "text": result_command}, 200
-        else:
-            # Не 404, потому что запрос был проведён полностью
-            return jsonify({"message": "Ничего не найдено"}), 202
 
 
 @app.route("/end", methods=['GET'])
@@ -94,6 +90,17 @@ def process_message():
                 return {"text": "Ничего не найдено"}, 202
     else:
         return "ХЗ"
+
+
+import numpy as np
+
+
+def wav2pcm(wavfile, pcmfile, data_type=np.int16):
+    f = open(wavfile, "rb")
+    f.seek(0)
+    f.read(44)
+    data = np.fromfile(f, dtype=data_type)
+    data.tofile(pcmfile)
 
 
 if __name__ == '__main__':

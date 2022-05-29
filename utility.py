@@ -43,7 +43,7 @@ def compare_commands(user_input: str, commands: list) -> str:
 
 class Recognizer:
     def __init__(self):
-        self.dir = "audios/"
+        self.dir = ""
         self.recognizer = speech_recognition.Recognizer()
 
     def recognize_audio(self, audio_file: str):
