@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,6 +19,7 @@ import com.maltsev.stankinhack.BOT_SENDER
 import com.maltsev.stankinhack.ui.items.ChatUI
 import com.maltsev.stankinhack.ui.items.SendMessageUI
 import com.maltsev.stankinhack.utils.Message
+import com.maltsev.stankinhack.utils.SpeechClass
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -30,13 +33,15 @@ val canTalking = mutableStateOf(true)
 
 val messagesList = mutableStateListOf<Message>(Message(BOT_SENDER, "Привет, студент!"), Message(BOT_SENDER, "Спрашивай, что интересно!"))
 
+var speech: SpeechClass? = null
 
 @Composable
 fun MainScreen(navController: NavController) {
-
+    val context = LocalContext.current
+    speech = SpeechClass(context)
     Scaffold(
         topBar = { TopAppBar (
-            title = { Text ("Бот-помощник Борис", color = Color.White)
+            title = { Text ("Бот Борисыч", color = Color.White, textAlign = TextAlign.Center)
             }, backgroundColor =  MaterialTheme.colors.primary) },
         content = {
             Surface {

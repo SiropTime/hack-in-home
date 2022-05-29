@@ -44,6 +44,7 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import com.maltsev.stankinhack.screens.canTalking
 import com.maltsev.stankinhack.screens.messageFieldText
 import com.maltsev.stankinhack.screens.messagesList
+import com.maltsev.stankinhack.screens.speech
 import com.maltsev.stankinhack.utils.Message
 import com.maltsev.stankinhack.utils.makeSendingAudio
 import com.maltsev.stankinhack.utils.makeSendingMessage
@@ -55,13 +56,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
-var audioRecord: AudioRecord? = null
-val AUDIO_SOURCE = MediaRecorder.AudioSource.MIC
-val SAMPLE_RATE = 44100
-val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
-val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_8BIT
-val BUFFER_SIZE_RECORDING = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
-
+var audioRecorder: MediaRecorder? = null
 val isListening = mutableStateOf(false)
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -119,25 +114,18 @@ fun SendMessageUI() {
             // Voice button
             OutlinedButton(
                 onClick = {
-                    if (!isPressed.value) {
-                        isListening.value = true
-                        isPressed.value = true
-                        CoroutineScope(Dispatchers.IO).launch {
-                            startRecording(context = context)
-                            file.createNewFile()
-                            writeAudioData(file)
-
-                        }
-                    } else {
-
-                        isListening.value = false
+                    if (isAudioRecording()) {
+                        stopRecording()
                         isPressed.value = false
                         CoroutineScope(Dispatchers.IO).launch {
-                            makeSendingAudio(context)
+                            makeSendingAudio(file)
                         }
-
+                    } else {
+                        file.createNewFile()
+                        startRecording(file)
+                        isPressed.value = true
                     }
-                },
+                    },
                 modifier = Modifier
                     .padding(vertical = 2.dp, horizontal = 4.dp)
                     .size(50.dp)
@@ -183,52 +171,26 @@ fun SendMessageUI() {
     }
 }
 
-fun startRecording(context: Context) {
-    if (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.RECORD_AUDIO
-        ) != PackageManager.PERMISSION_GRANTED
-    ) {
-
-        return
+@Suppress("DEPRECATION")
+fun startRecording(file: File) {
+    Log.d("AUDIO", "Starting recording")
+    audioRecorder = MediaRecorder().apply {
+        setAudioSource(MediaRecorder.AudioSource.MIC)
+        setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+        setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        setOutputFile(file)
+        prepare()
+        start()
     }
-    audioRecord = AudioRecord(AUDIO_SOURCE, SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT, BUFFER_SIZE_RECORDING)
-    if (audioRecord!!.getState() != AudioRecord.STATE_INITIALIZED) {
-        Log.e("AUDIO", "error initializing")
-    }
-    audioRecord!!.startRecording()
-
 }
 
-fun writeAudioData(fileName: File) {
-    var data = ByteArray(BUFFER_SIZE_RECORDING/2)
-    var outputStream : FileOutputStream? = null
-    try {
-        outputStream = FileOutputStream(fileName)
-    } catch (e: FileNotFoundException) {
-        Log.e("AUDIO", "COULDN'T CREATE OUTPUT STREAM")
-        e.printStackTrace()
+fun stopRecording() {
+    audioRecorder?.let {
+        Log.d("AUDIO", "Stopping recording")
+        it.stop()
+        it.release()
     }
-    while (isListening.value) {
-        val read = audioRecord!!.read(data, 0, data.size)
-        try {
-            outputStream!!.write(data, 0, read)
-        } catch (e: IOException) {
-            Log.d("AUDIO", "ERROR WHILE WRITING IN FILE")
-            e.printStackTrace()
-        }
-
-    }
-    try {
-        outputStream!!.flush()
-        outputStream.close()
-    } catch (e: IOException) {
-        Log.d("AUDIO", "exception while closing output stream " + e.toString())
-        e.printStackTrace()
-    }
-    Log.d("AUDIO", "SUCCESSFUL")
-    audioRecord!!.stop()
-    audioRecord!!.release()
-    audioRecord = null
-
+    audioRecorder = null
 }
+
+fun isAudioRecording() = audioRecorder != null
